@@ -21,6 +21,7 @@ from rag.chatbot import ChatBot
 from parse.parsing import LLMParser
 from config.ai_models import list_models
 from couch_db.couchdb2 import couchbase_data
+from utils.dialog import show_details_dialog
 
 # Set Windows event loop policy
 if sys.platform == "win32":
@@ -268,8 +269,9 @@ elif page == "AI Chatbot":
             else:
                 st.info("Please create embeddings to activate the chat.")
 
+
 elif page == "Reports":
-    
+
     st.header("Experiment Reports")
 
     # read data from couchbase
@@ -294,12 +296,12 @@ elif page == "Reports":
         if not isinstance(experiment, dict):
             continue
         
-        with st.expander(f"Experiment: {experiment_key}", expanded = False):
+        with st.expander(f"**Experiment:** \n{experiment_key}", expanded = False):
             
             # experiment metadata
-            st.markdown(f"**URL:** {experiment.get('url')}")
-            st.markdown(f"**Question:** {experiment.get('question')}")
-            st.markdown(f"**Date:** {experiment.get('date')}")
+            st.markdown(f"**URL:** \n{experiment.get('url')}")
+            st.markdown(f"**Question:** \n{experiment.get('question')}")
+            st.markdown(f"**Date:** \n{experiment.get('date')}")
             
             st.markdown("---")
 
@@ -309,10 +311,7 @@ elif page == "Reports":
                 'Answer': experiment.get('answer', []),
                 'Time': experiment.get('time', []),
                 'Score': experiment.get('score', [])
-            })
-
-            # Add an Actions column if needed
-            df['Actions'] = "View Details"
+            })            
 
             # display the current page
             st.subheader("Report of conversations")
@@ -333,9 +332,10 @@ elif page == "Reports":
             
             start_idx = (page_num - 1) * page_size
             end_idx = start_idx + page_size
+            current_df_slice = df.iloc[start_idx:end_idx]
 
-            st.dataframe(
-                data = df.iloc[start_idx:end_idx],
+            event = st.dataframe(
+                data = current_df_slice,
                 column_config = {
                     "Model": st.column_config.TextColumn(
                         "Model", width = "medium"
@@ -348,12 +348,19 @@ elif page == "Reports":
                     ),
                     "Score": st.column_config.NumberColumn(
                         "Score", format="%.2f", width = "small"
-                    ),
-                    "Actions": st.column_config.TextColumn(
-                        "Actions", width = "small"
                     )
                 }, 
                 use_container_width = True,
-                hide_index = True
+                hide_index = True,
+                on_select="rerun",
+                selection_mode="single-row",
+                key=f"df_{experiment_key}"
             )
 
+            st.markdown("---")
+
+            # Trigger dialog if a row is selected
+            if event and event.selection and event.selection.rows:
+                selected_row_idx = event.selection.rows[0]
+                selected_data = current_df_slice.iloc[selected_row_idx]                
+                show_details_dialog(selected_data['Model'], selected_data['Answer'])
