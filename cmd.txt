@@ -53,9 +53,15 @@ Hierarchy of couchbase:
 * username: admin
 * pass: 123456
 
-12) command to start docker container 
+12) command to start docker container [start our container couchdb]
 
 $ docker start couchbase_mrag
+
+13) access to my couchbase db 
+
+--> bucket_mrag
+|
+|---> chatbot_bench
 
 
 ========================================
