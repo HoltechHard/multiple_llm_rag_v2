@@ -279,9 +279,7 @@ elif page == "Reports":
         st.warning("No data found in couchbase")
         st.stop()
 
-    st.json(experiment_data)
-
-    experiment_keys = [k for k in experiment_data.keys()]
+    experiment_keys = list(experiment_data.keys())
 
     if not experiment_keys:
         st.warning("No experiments found in the database!")
@@ -296,59 +294,66 @@ elif page == "Reports":
         if not isinstance(experiment, dict):
             continue
         
-        with st.expander(f"Experiment {experiment_key}", expanded = False):
+        with st.expander(f"Experiment: {experiment_key}", expanded = False):
             
             # experiment metadata
-            st.markdown(f"**URL: ** {experiment.get('url')}")
-            st.markdown(f"**Question: ** {experiment.get('question')}")
-            st.markdown(f"**Date: ** {experiment.get('date')}")
+            st.markdown(f"**URL:** {experiment.get('url')}")
+            st.markdown(f"**Question:** {experiment.get('question')}")
+            st.markdown(f"**Date:** {experiment.get('date')}")
             
             st.markdown("---")
 
-            response_data = {
-                'Model': experiment['model_name'],
-                'Answer': experiment['answer'],
-                'Time': [f"{t:.2f}" for t in experiment['time']],
-                'Score': [f"{s:.2f}" if s is not None else 0 for s in experiment['score']]                    
-            }
-
             # generation of each response in each accordion
             df = pd.DataFrame({
-                'Model': experiment['model_name'],
-                'Answer': experiment['answer'],
-                'Time': experiment['time'],
-                'Score': experiment['score']
+                'Model': experiment.get('model_name', []),
+                'Answer': experiment.get('answer', []),
+                'Time': experiment.get('time', []),
+                'Score': experiment.get('score', [])
             })
+
+            # Add an Actions column if needed
+            df['Actions'] = "View Details"
 
             # display the current page
             st.subheader("Report of conversations")
 
-            # pagination
+            # pagination logic
             page_size = 5
-            page_num = st.number_input("Page number", min_value = 1, 
-                                        max_value = max(1, len(df)-1)//page_size + 1, value = 1)
+            total_items = len(df)
+            total_pages = max(1, (total_items - 1) // page_size + 1)
+
+            # Fix Duplicate ID by providing a unique key
+            page_num = st.number_input(
+                f"Page number", 
+                min_value = 1, 
+                max_value = total_pages, 
+                value = 1,
+                key = f"page_num_{experiment_key}"
+            )
+            
             start_idx = (page_num - 1) * page_size
             end_idx = start_idx + page_size
 
-            selected_row = st.dataframe(data = df.iloc[start_idx:end_idx],
-                        column_config = {
-                            "Model": st.column_config.TextColumn(
-                                "Model", width = "medium", help = "Click row to expand"
-                            ),
-                            "Answer": st.column_config.TextColumn(
-                                "Answer", width = "medium", help = "Click row to expand"
-                            ),
-                            "Time": st.column_config.TextColumn(
-                                "Time (min)", width = "small", help = "Click row to expand"
-                            ),
-                            "Score": st.column_config.TextColumn(
-                                "Score", width = "small", help = "Click row to expand"
-                            ),
-                            "Actions": st.column_config.TextColumn(
-                                "Actions", width = "small"
-                            ),
-                            "row_id": None
-                        }, use_container_width = True)
-    else:
-        st.warning("No data found in couchbase!")
+            st.dataframe(
+                data = df.iloc[start_idx:end_idx],
+                column_config = {
+                    "Model": st.column_config.TextColumn(
+                        "Model", width = "medium"
+                    ),
+                    "Answer": st.column_config.TextColumn(
+                        "Answer", width = "large"
+                    ),
+                    "Time": st.column_config.NumberColumn(
+                        "Time (min)", format="%.2f", width = "small"
+                    ),
+                    "Score": st.column_config.NumberColumn(
+                        "Score", format="%.2f", width = "small"
+                    ),
+                    "Actions": st.column_config.TextColumn(
+                        "Actions", width = "small"
+                    )
+                }, 
+                use_container_width = True,
+                hide_index = True
+            )
 
