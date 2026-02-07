@@ -4,11 +4,11 @@
 
 1) create python environment
 
-$ python -m venv mrag_env
+$ python -m venv mrag_env2
 
 2) activate python environment
 
-$ .\mrag_env\Scripts\activate
+$ .\mrag_env2\Scripts\activate
 
 3) install all python packages
 
