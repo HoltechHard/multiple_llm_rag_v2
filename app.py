@@ -14,10 +14,11 @@ from highcharts_core.chart import Chart
 from highcharts_core.options import HighchartsOptions
 
 # own classes
-from scrap.scrapper import WebScrapper
+from scrap.scraper import WebScrapper
 from rag.summarization import WebSummarizer
 from rag.ingest import EmbeddingIngestor
 from rag.chatbot import ChatBot
+from parse.parsing import LLMParser
 from config.ai_models import list_models
 from couch_db.couchdb2 import couchbase_data
 
@@ -135,11 +136,25 @@ elif page == "AI Chatbot":
                 with st.spinner("Summarizing..."):
                     summarizer = WebSummarizer()
                     st.session_state.summary = summarizer.summarize(st.session_state.extracted_text)
-                st.success("Summarization complete!")
+                st.success("Summarization complete!")            
 
             if st.session_state.summary:
                 st.subheader("Summarized Output")
-                st.markdown(st.session_state.summary, unsafe_allow_html=False)
+                
+                # LLM parsing
+                parser = LLMParser()
+                main_text, think_text = parser.parse_llm_response(st.session_state.summary)
+                
+                # Reasoning in expander (only if present)
+                if think_text:
+                    with st.expander("Thinking/Reasoning", expanded=False):
+                        st.markdown(think_text)
+
+                # Main summary/answer
+                if main_text:
+                    st.markdown(main_text)
+                else:
+                    st.markdown("No summary content generated!")
 
         with col2:
             st.header("3. Create Embeddings")
@@ -229,10 +244,27 @@ elif page == "AI Chatbot":
                 # show response in frontend
                 if st.session_state.chat_history:
                     for chat in st.session_state.chat_history:
-                        # print chatbot results in frontend
+                        # initialize the parser
+                        parser = LLMParser()
+
+                        # print user question in frontend
                         st.markdown(f"Time: {chat.get('time', 0):.2f} minutes")
                         st_message(chat["user"], is_user=True)
-                        st_message(chat["bot"], is_user=False)                        
+                        
+                        # print the bot answer in fronted
+                        bot_main_text, bot_think_text = parser.parse_llm_response(chat["bot"])
+
+                        # hidden reasoning process in expander
+                        if bot_think_text:
+                            with st.expander("Thinking / Reasoning", expanded=False):
+                                st.markdown(bot_think_text)
+
+                        # Show main bot answer
+                        st_message(
+                            bot_main_text if bot_main_text else chat["bot"],
+                            is_user=False
+                        )
+
             else:
                 st.info("Please create embeddings to activate the chat.")
 
