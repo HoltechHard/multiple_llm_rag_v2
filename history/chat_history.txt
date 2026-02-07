@@ -1,0 +1,12 @@
+User: What is deep learning?
+Bot: Deep learning is a subset of machine learning.  It uses multi-layered neural networks to process data and perform tasks such as classification, regression, and representation learning. The "deep" in deep learning refers to the multiple layers (ranging from three to several hundred or thousands) used in the network. 
+
+Here's how it relates to machine learning:
+
+* **Machine Learning:** A broader field that uses algorithms to learn patterns and make predictions from data without explicit programming.
+* **Deep Learning:** A specific type of machine learning that relies on deep neural networks with multiple layers to process data more effectively.
+
+
+Deep learning is inspired by biological neuroscience, mimicking the structure and function of the human brain. It utilizes artificial neurons organized into layers and "trains" them using a process called backpropagation to learn from input data. 
+
+Time: 2.73 min
