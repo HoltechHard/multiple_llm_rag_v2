@@ -10,8 +10,10 @@ import pandas as pd
 import json
 from datetime import datetime
 import streamlit.components.v1 as components
-from highcharts_core.chart import Chart
-from highcharts_core.options import HighchartsOptions
+from pathlib import Path
+#from highcharts_core.chart import Chart
+#from highcharts_core.options import HighchartsOptions
+from utils.highcharts import population_bar_chart
 
 # own classes
 from scrap.scraper import WebScrapper
@@ -364,3 +366,31 @@ elif page == "Reports":
                 selected_row_idx = event.selection.rows[0]
                 selected_data = current_df_slice.iloc[selected_row_idx]                
                 show_details_dialog(selected_data['Model'], selected_data['Answer'])
+
+
+elif page == "Benchmarks":
+
+    st.markdown("### Global Analysis: Benchmark performance x Model")
+
+    st.markdown("---")
+
+    st.markdown("### Detailed Analysis: Benchmark performance x Question")
+
+    st.title("Highcharts + Streamlit (Modular)")
+
+    # Load HTML template and JS scripts
+    html_template = Path("static/html/chart.html").read_text(encoding="utf-8")
+    chart_options_json = population_bar_chart()
+
+    # Inject options
+    html_filled = html_template.replace(
+        "__OPTIONS__", chart_options_json
+    )
+
+    # Render
+    components.html(
+        html_filled,
+        height=500,
+        scrolling=False
+    )
+    
