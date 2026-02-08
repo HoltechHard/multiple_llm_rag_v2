@@ -390,7 +390,7 @@ elif page == "Benchmarks":
     # Render
     components.html(
         html_filled,
-        height=500,
+        height=1000,
         scrolling=False
     )
     
