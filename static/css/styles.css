@@ -14,6 +14,11 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+h3{
+    color: var(--highcharts-neutral-color-80, #333);
+    margin: 0.5rem 10px;
+}
+
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;
@@ -21,7 +26,7 @@ body {
     margin: 1em auto;
 }
 
-#container, #container2 {
+#container-global, #container-detail {
     height: 400px;
 }
 
