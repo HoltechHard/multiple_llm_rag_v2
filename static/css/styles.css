@@ -21,7 +21,7 @@ body {
     margin: 1em auto;
 }
 
-#container {
+#container, #container2 {
     height: 400px;
 }
 
