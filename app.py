@@ -13,7 +13,7 @@ import streamlit.components.v1 as components
 from pathlib import Path
 #from highcharts_core.chart import Chart
 #from highcharts_core.options import HighchartsOptions
-from utils.highcharts import population_bar_chart
+#from utils.highcharts import population_bar_chart
 
 # own classes
 from scrap.scraper import WebScrapper
@@ -370,21 +370,21 @@ elif page == "Reports":
 
 elif page == "Benchmarks":
 
-    st.markdown("### Global Analysis: Benchmark performance x Model")
+    #st.markdown("### Global Analysis: Benchmark performance x Model")
 
-    st.markdown("---")
+    #st.markdown("---")
 
-    st.markdown("### Detailed Analysis: Benchmark performance x Question")
-
-    st.title("Highcharts + Streamlit (Modular)")
+    #st.markdown("### Detailed Analysis: Benchmark performance x Question")
 
     # Load HTML template and JS scripts
-    html_template = Path("static/html/chart.html").read_text(encoding="utf-8")
-    chart_options_json = population_bar_chart()
+    html_template = Path("static/html/charts.html").read_text(encoding="utf-8")
+    
+    # Load JS script content
+    js_charts = Path("static/js/render_chart.js").read_text(encoding="utf-8")
 
-    # Inject options
+    # Inject script
     html_filled = html_template.replace(
-        "__OPTIONS__", chart_options_json
+        "__JS_CHARTS__", js_charts
     )
 
     # Render
