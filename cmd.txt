@@ -63,6 +63,14 @@ $ docker start couchbase_mrag
 |
 |---> chatbot_bench
 
+14) highcharts reference
+
+- barplot 
+https://jsfiddle.net/api/post/library/pure/
+
+- boxplot
+https://jsfiddle.net/api/post/library/pure/
+
 
 ========================================
 |       PUSH PROJECT TO GITHUB         |
