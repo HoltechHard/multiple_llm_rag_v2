@@ -11,9 +11,6 @@ import json
 from datetime import datetime
 import streamlit.components.v1 as components
 from pathlib import Path
-#from highcharts_core.chart import Chart
-#from highcharts_core.options import HighchartsOptions
-#from utils.highcharts import population_bar_chart
 
 # own classes
 from scrap.scraper import WebScrapper
@@ -24,6 +21,7 @@ from parse.parsing import LLMParser
 from config.ai_models import list_models
 from couch_db.couchdb2 import couchbase_data
 from utils.dialog import show_details_dialog
+from utils.experiments import preprocess_experimental_data
 
 # Set Windows event loop policy
 if sys.platform == "win32":
@@ -370,11 +368,15 @@ elif page == "Reports":
 
 elif page == "Benchmarks":
 
-    #st.markdown("### Global Analysis: Benchmark performance x Model")
+    # read data from couchbase
+    experiment_data = couchbase_data.read_documents()
+    
+    # testing
+    processed_data = preprocess_experimental_data(experiment_data)
 
-    #st.markdown("---")
-
-    #st.markdown("### Detailed Analysis: Benchmark performance x Question")
+    # Serialize to JSON strings
+    exp_keys_json = json.dumps(processed_data[0])
+    series_json = json.dumps(processed_data[1])
 
     # Load HTML template and JS scripts
     html_template = Path("static/html/charts.html").read_text(encoding="utf-8")
@@ -382,9 +384,13 @@ elif page == "Benchmarks":
     # Load JS script content
     js_charts = Path("static/js/render_chart.js").read_text(encoding="utf-8")
 
-    # Inject script
+    # Inject data and script
     html_filled = html_template.replace(
         "__JS_CHARTS__", js_charts
+    ).replace(
+        "__EXP_KEYS__", exp_keys_json
+    ).replace(
+        "__SERIES__", series_json
     )
 
     # Render
