@@ -74,12 +74,39 @@ function render_global_time_boxplot(containerId) {
 }
 
 function render_detail_time_barplot(containerId, experiment_keys, experiment_series) {
+
+    // dynamic height calculation
+    const BASE_HEIGHT = 500;
+    const EXTRA_PER_CATEGORY = 80;
+    const CATEGORY_THRESHOLD = 4;
+    const MAX_VISIBLE_HEIGHT = 1400;
+
+    let calculatedHeight = BASE_HEIGHT;
+
+    if (experiment_keys.length > CATEGORY_THRESHOLD) {
+        calculatedHeight +=
+            (experiment_keys.length - CATEGORY_THRESHOLD) * EXTRA_PER_CATEGORY;
+    }
+
+    // calculate the total height
+    const container = document.getElementById(containerId);
+
+    // control the size of the highchart
+    if (calculatedHeight > MAX_VISIBLE_HEIGHT) {
+        container.style.height = `${MAX_VISIBLE_HEIGHT}px`;
+        container.style.overflowY = "auto";
+    } else {
+        container.style.height = `${calculatedHeight}px`;
+        container.style.overflowY = "hidden";
+    }
+
     Highcharts.chart(containerId, {
         chart: {
-            type: 'bar'
+            type: 'bar',
+            height: calculatedHeight
         },
         title: {
-            text: 'Global Analysis - Time'
+            text: 'Detailed Analysis - Time Performance of LLM Models by Experiment'
         },
         subtitle: {
             text: 'Source: Web - Chatbot'
@@ -132,4 +159,3 @@ function render_detail_time_barplot(containerId, experiment_keys, experiment_ser
         series: experiment_series
     });
 }
-

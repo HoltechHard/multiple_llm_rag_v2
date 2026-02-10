@@ -27,7 +27,8 @@ body {
 }
 
 #container-global, #container-detail {
-    height: 900px;
+    min-height: 600 px;
+    width: 100%;
 }
 
 .highcharts-data-table table {
