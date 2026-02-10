@@ -21,7 +21,8 @@ from parse.parsing import LLMParser
 from config.ai_models import list_models
 from couch_db.couchdb2 import couchbase_data
 from utils.dialog import show_details_dialog
-from utils.experiments import preprocess_experimental_data
+from utils.experiments import prepare_boxplot_time
+from utils.experiments import prepare_barplot_time
 
 # Set Windows event loop policy
 if sys.platform == "win32":
@@ -371,12 +372,18 @@ elif page == "Benchmarks":
     # read data from couchbase
     experiment_data = couchbase_data.read_documents()
     
-    # testing
-    processed_data = preprocess_experimental_data(experiment_data)
+    # preprocess charts data
+    box_time_data = prepare_boxplot_time(experiment_data)
+    bar_time_data = prepare_barplot_time(experiment_data)        
+    
+    # serialize to JSON strings
+    box_models_json = json.dumps(box_time_data[0])
+    box_obs_json = json.dumps(box_time_data[1])
+    box_outliers_json = json.dumps(box_time_data[2])
 
-    # Serialize to JSON strings
-    exp_keys_json = json.dumps(processed_data[0])
-    series_json = json.dumps(processed_data[1])
+    # serialize to JSON strings
+    bar_keys_json = json.dumps(bar_time_data[0])
+    bar_series_json = json.dumps(bar_time_data[1])
 
     # Load HTML template and JS scripts
     html_template = Path("static/html/charts.html").read_text(encoding="utf-8")
@@ -388,9 +395,15 @@ elif page == "Benchmarks":
     html_filled = html_template.replace(
         "__JS_CHARTS__", js_charts
     ).replace(
-        "__EXP_KEYS__", exp_keys_json
+        "__BOX_MODELS__", box_models_json
     ).replace(
-        "__SERIES__", series_json
+        "__BOX_OBSERVATIONS__", box_obs_json
+    ).replace(
+        "__BOX_OUTLIERS__", box_outliers_json
+    ).replace(
+        "__BAR_KEYS__", bar_keys_json
+    ).replace(
+        "__BAR_SERIES__", bar_series_json
     )
 
     # Render
