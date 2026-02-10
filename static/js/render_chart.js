@@ -1,11 +1,11 @@
-function render_global_time_boxplot(containerId){
+function render_global_time_boxplot(containerId) {
     Highcharts.chart(containerId, {
         chart: {
             type: 'boxplot'
         },
 
         title: {
-            text: 'Highcharts Box Plot Example'
+            text: 'Global Analysis - Time'
         },
 
         legend: {
@@ -73,21 +73,19 @@ function render_global_time_boxplot(containerId){
     });
 }
 
-function render_detail_time_barplot(containerId) {
+function render_detail_time_barplot(containerId, experiment_keys, experiment_series) {
     Highcharts.chart(containerId, {
         chart: {
             type: 'bar'
         },
         title: {
-            text: 'Historic World Population by Region'
+            text: 'Global Analysis - Time'
         },
         subtitle: {
-            text: 'Source: <a ' +
-                'href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"' +
-                'target="_blank">Wikipedia.org</a>'
+            text: 'Source: Web - Chatbot'
         },
         xAxis: {
-            categories: ['Africa', 'America', 'Asia', 'Europe'],
+            categories: experiment_keys,
             title: {
                 text: null
             },
@@ -97,7 +95,7 @@ function render_detail_time_barplot(containerId) {
         yAxis: {
             min: 0,
             title: {
-                text: 'Population (millions)',
+                text: 'Time (min)',
                 align: 'high'
             },
             labels: {
@@ -106,7 +104,7 @@ function render_detail_time_barplot(containerId) {
             gridLineWidth: 0
         },
         tooltip: {
-            valueSuffix: ' millions'
+            valueSuffix: 'minutes'
         },
         plotOptions: {
             bar: {
@@ -131,16 +129,7 @@ function render_detail_time_barplot(containerId) {
         credits: {
             enabled: false
         },
-        series: [{
-            name: 'Year 1990',
-            data: [632, 727, 3202, 721]
-        }, {
-            name: 'Year 2000',
-            data: [814, 841, 3714, 726]
-        }, {
-            name: 'Year 2021',
-            data: [1393, 1031, 4695, 745]
-        }]
+        series: experiment_series
     });
 }
 

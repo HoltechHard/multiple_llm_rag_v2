@@ -15,16 +15,15 @@
 <body>
 
     <figure class="highcharts-figure">
-        <h3>Global Analysis: Benchmark performance x Model</h3>
+        <h3 class="chart-text">Global Analysis: Benchmark performance x Model</h3>
         <div id="container-global"></div>
     </figure>
 
     <br>
-    <hr>
-    <br>
+    <hr><br>
 
     <figure class="highcharts-figure">
-        <h3>Detailed Analysis: Benchmark performance x Question</h3>
+        <h3 class="chart-text">Detailed Analysis: Benchmark performance x Question</h3>
         <div id="container-detail"></div>
     </figure>
 
@@ -33,9 +32,12 @@
     </script>
 
     <script>
+        const experiment_keys = __EXP_KEYS__;
+        const experiment_series = __SERIES__;
+
         document.addEventListener('DOMContentLoaded', function () {
             render_global_time_boxplot('container-global');
-            render_detail_time_barplot('container-detail');
+            render_detail_time_barplot('container-detail', experiment_keys, experiment_series);
         });
     </script>
 

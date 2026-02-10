@@ -14,8 +14,8 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-h3{
-    color: var(--highcharts-neutral-color-80, #333);
+.chart-text{
+    color: var(--highcharts-neutral-color-80, yellow);
     margin: 0.5rem 10px;
 }
 
@@ -27,7 +27,7 @@ h3{
 }
 
 #container-global, #container-detail {
-    height: 400px;
+    height: 900px;
 }
 
 .highcharts-data-table table {
