@@ -1,11 +1,11 @@
-function render_global_time_boxplot(containerId) {
+function render_global_time_boxplot(containerId, model_names, observations, outliers) {
     Highcharts.chart(containerId, {
         chart: {
             type: 'boxplot'
         },
 
         title: {
-            text: 'Global Analysis - Time'
+            text: 'Global Analysis - Time Performance of LLM'
         },
 
         legend: {
@@ -13,67 +13,44 @@ function render_global_time_boxplot(containerId) {
         },
 
         xAxis: {
-            categories: ['1', '2', '3', '4', '5'],
+            categories: model_names,
             title: {
-                text: 'Experiment No.'
+                text: 'LLM Models'
             }
         },
 
         yAxis: {
             title: {
-                text: 'Observations'
-            },
-            plotLines: [{
-                value: 932,
-                color: 'red',
-                width: 1,
-                label: {
-                    text: 'Theoretical mean: 932',
-                    align: 'center',
-                    style: {
-                        color: 'gray'
-                    }
-                }
-            }]
+                text: 'Time (min)'
+            }
         },
 
         series: [{
             name: 'Observations',
-            data: [
-                [760, 801, 848, 895, 965],
-                [733, 853, 939, 980, 1080],
-                [714, 762, 817, 870, 918],
-                [724, 802, 806, 871, 950],
-                [834, 836, 864, 882, 910]
-            ],
+            data: observations,
             tooltip: {
-                headerFormat: '<em>Experiment No {point.key}</em><br/>'
+                headerFormat: '<em>Model: {point.key}</em><br/>'
             },
             color: Highcharts.defaultOptions.colors[1]
         }, {
             name: 'Outliers',
             color: Highcharts.defaultOptions.colors[1],
             type: 'scatter',
-            data: [ // x, y positions where 0 is the first category
-                [0, 644],
-                [4, 718],
-                [4, 951],
-                [4, 969]
-            ],
+            data: outliers,
             marker: {
                 fillColor: 'white',
                 lineWidth: 1,
                 lineColor: Highcharts.defaultOptions.colors[1]
             },
             tooltip: {
-                pointFormat: 'Observation: {point.y}'
+                pointFormat: 'Value: {point.y}'
             }
         }]
 
     });
 }
 
-function render_detail_time_barplot(containerId, experiment_keys, experiment_series) {
+function render_detail_time_barplot(containerId, bar_keys, bar_series) {
 
     // dynamic height calculation
     const BASE_HEIGHT = 500;
@@ -83,9 +60,9 @@ function render_detail_time_barplot(containerId, experiment_keys, experiment_ser
 
     let calculatedHeight = BASE_HEIGHT;
 
-    if (experiment_keys.length > CATEGORY_THRESHOLD) {
+    if (bar_keys.length > CATEGORY_THRESHOLD) {
         calculatedHeight +=
-            (experiment_keys.length - CATEGORY_THRESHOLD) * EXTRA_PER_CATEGORY;
+            (bar_keys.length - CATEGORY_THRESHOLD) * EXTRA_PER_CATEGORY;
     }
 
     // calculate the total height
@@ -112,7 +89,7 @@ function render_detail_time_barplot(containerId, experiment_keys, experiment_ser
             text: 'Source: Web - Chatbot'
         },
         xAxis: {
-            categories: experiment_keys,
+            categories: bar_keys,
             title: {
                 text: null
             },
@@ -156,6 +133,6 @@ function render_detail_time_barplot(containerId, experiment_keys, experiment_ser
         credits: {
             enabled: false
         },
-        series: experiment_series
+        series: bar_series
     });
 }

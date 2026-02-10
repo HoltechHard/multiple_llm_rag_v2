@@ -31,13 +31,16 @@
         __JS_CHARTS__
     </script>
 
-    <script>
-        const experiment_keys = __EXP_KEYS__;
-        const experiment_series = __SERIES__;
+    <script>        
+        const box_models = __BOX_MODELS__;
+        const box_observations = __BOX_OBSERVATIONS__;
+        const box_outliers = __BOX_OUTLIERS__;
+        const bar_keys = __BAR_KEYS__;
+        const bar_series = __BAR_SERIES__;
 
         document.addEventListener('DOMContentLoaded', function () {
-            render_global_time_boxplot('container-global');
-            render_detail_time_barplot('container-detail', experiment_keys, experiment_series);
+            render_global_time_boxplot('container-global', box_models, box_observations, box_outliers);
+            render_detail_time_barplot('container-detail', bar_keys, bar_series);
         });
     </script>
 
